@@ -12,22 +12,23 @@ class Asztalok():
 
 class Foglalasok():
     def __init__(self,sor):
-        vendeg, f_l, fog_kezd, fog_vege, szek_szam, id = sor.strip().split(";")
+        vendeg, f_l, fog_kezd, fog_vege, szek_szam, *asztalid = sor.strip().split(";")
         self.vendeg     = vendeg
         self.f_l        = f_l
+        self.turmix     = fog_kezd
+        self.datum      = fog_kezd[0:5]
         self.fog_kezd   = fog_kezd[6:12]
         self.fog_vege   = fog_vege
         self.szek_szam  = int(szek_szam)
-        self.id         = id
+        self.asztalid       = asztalid
 
 
-bemenet = "asztalok1.txt"
+bemenet = "asztalok3.txt"
 bemenetf = "foglalasok1.txt"
 
 with open(bemenet, encoding="UTF-8")as f:
     aszt = [Asztalok(sor) for sor in f]
 with open(bemenetf,encoding="UTF-8")as f:
-
     fog = [Foglalasok(sor) for sor in f]
 
 # bekeres = input("""Írjon be egy számot 1-4 a menupont kiválasztásához.
@@ -36,28 +37,46 @@ with open(bemenetf,encoding="UTF-8")as f:
 # •   Statisztika(3)
 # •   Kilépés(4)
 # """)
+# bekeres = "1"
+# foglalas = True
+# szamlalo = 0
+# while foglalas:
+#     if bekeres == "1":
+#         print("Írjon be egy számot 1-5 a menupont kiválasztásához.")
+#         nev         = input("•   Vendég neve ")
+#         fog_kezd    = input("•   Foglalás kezdete (HÓNAP-NAP ÓRA:PERC formátumban) ")
+#         fog_vege    = input("•   Foglalás vége (ÓRA:PERC formátumban) ")
+#         szek_szam   = int(input("•   Foglalt székek száma "))
+#         belter          = input("•   Beltéri vagy kültéri asztalt szeretnének (B = beltéri, K = kültéri) ")
+fog_kezd    = "12-01 06:00"
+fog_vege    = "09:00"
+szek_szam   = 7
+belter      = "K"
 
-# if bekeres == "1":
-#     print("Írjon be egy számot 1-5 a menupont kiválasztásához.")
-#     nev         = input("•   Vendég neve(1)")
-#     fog_kezd    = input("•   Foglalás kezdete (HÓNAP-NAP ÓRA:PERC formátumban)(2)")
-#     fog_vege    = input("•   Foglalás vége (ÓRA:PERC formátumban)(3)")
-#     szek_szam   = int(input("•   Foglalt székek száma(4)"))
-#     id          = input("•   Beltéri vagy kültéri asztalt szeretnének (B = beltéri, K = kültéri)(5)")
 
-fog_kezd = "20:30"
-fog_vege = "22:00"
+if fog_kezd[0:5] > fog_vege:
+    print("a kezdet nagyobb mint a vege")
+if fog_kezd[0:5] < "06:00":
+    print("06:00-tol van nyitva")
+if fog_vege > "22:00":
+    print("22:00-tol van zarva")
+else:
+    foglalas = False
 
-
+fog_kezd = "12-00 08:00"
+fog_vege = "20:20"
+#A;F;12-02 20:30;22:00;4;1
 for sor in fog:
-    if fog_kezd >= sor.fog_kezd:
-        print("szar vagy")
-        print(sor.fog_kezd)
-    fog_vege = sor.fog_vege
-    o,p = fog_vege.split(":")
+    vege = sor.fog_vege
+    o,p = vege.split(":")
     p = int(p)
     p += 10
-    fog_vege = o + ":" + str(p)
-    if fog_vege <= fog_vege:
-        print(fog_vege)
-        print("\n")
+    vege = o + ":" + str(p)
+    if fog_vege < sor.fog_kezd or fog_kezd > vege and fog_kezd and fog_kezd[0:5] == sor.datum:
+        print("pozitiv")
+        print(fog_kezd,fog_vege)
+        print(sor.fog_kezd,vege)
+    else:
+        print("idopont foglalt")
+
+    
